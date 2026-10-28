@@ -1,0 +1,217 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+// Queue using Array
+int queue[MAX];
+int front = -1, rear = -1;
+
+// Queue using Linked List
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *frontList = NULL;
+struct Node *rearList = NULL;
+
+// ===== QUEUE USING ARRAY =====
+
+// Enqueue
+void enqueueArray(int value) {
+    if (rear == MAX - 1) {
+        printf("Array Queue Overflow!\n");
+        return;
+    }
+
+    if (front == -1)
+        front = 0;
+
+    queue[++rear] = value;
+    printf("%d inserted into array queue.\n", value);
+}
+
+// Dequeue
+void dequeueArray() {
+    if (front == -1 || front > rear) {
+        printf("Array Queue Underflow!\n");
+        return;
+    }
+
+    printf("%d deleted from array queue.\n",
+           queue[front++]);
+
+    if (front > rear)
+        front = rear = -1;
+}
+
+// Display array queue
+void displayArray() {
+    int i;
+
+    if (front == -1) {
+        printf("Array Queue is empty!\n");
+        return;
+    }
+
+    printf("Array Queue: ");
+
+    for (i = front; i <= rear; i++)
+        printf("%d ", queue[i]);
+
+    printf("\n");
+}
+
+// ===== QUEUE USING LINKED LIST =====
+
+// Enqueue
+void enqueueList(int value) {
+    struct Node *newNode =
+        (struct Node *)malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (rearList == NULL) {
+        frontList = rearList = newNode;
+    } else {
+        rearList->next = newNode;
+        rearList = newNode;
+    }
+
+    printf("%d inserted into linked list queue.\n", value);
+}
+
+// Dequeue
+void dequeueList() {
+    struct Node *temp;
+
+    if (frontList == NULL) {
+        printf("Linked List Queue Underflow!\n");
+        return;
+    }
+
+    temp = frontList;
+
+    printf("%d deleted from linked list queue.\n",
+           temp->data);
+
+    frontList = frontList->next;
+
+    if (frontList == NULL)
+        rearList = NULL;
+
+    free(temp);
+}
+
+// Display linked list queue
+void displayList() {
+    struct Node *temp = frontList;
+
+    if (frontList == NULL) {
+        printf("Linked List Queue is empty!\n");
+        return;
+    }
+
+    printf("Linked List Queue: ");
+
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    printf("\n");
+}
+
+// Free linked list memory
+void freeList() {
+    struct Node *temp;
+
+    while (frontList != NULL) {
+        temp = frontList;
+        frontList = frontList->next;
+        free(temp);
+    }
+
+    rearList = NULL;
+}
+
+// ===== MAIN FUNCTION =====
+
+int main() {
+    int choice, operation, value;
+
+    while (1) {
+        printf("\n===== QUEUE IMPLEMENTATIONS =====\n");
+        printf("1. Queue using Array\n");
+        printf("2. Queue using Linked List\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            freeList();
+            return 1;
+        }
+
+        if (choice == 3) {
+            freeList();
+            printf("Program terminated.\n");
+            return 0;
+        }
+
+        if (choice != 1 && choice != 2) {
+            printf("Invalid choice!\n");
+            continue;
+        }
+
+        printf("\n1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("Enter operation: ");
+
+        if (scanf("%d", &operation) != 1) {
+            freeList();
+            return 1;
+        }
+
+        switch (operation) {
+            case 1:
+                printf("Enter value: ");
+
+                if (scanf("%d", &value) != 1) {
+                    freeList();
+                    return 1;
+                }
+
+                if (choice == 1)
+                    enqueueArray(value);
+                else
+                    enqueueList(value);
+                break;
+
+            case 2:
+                if (choice == 1)
+                    dequeueArray();
+                else
+                    dequeueList();
+                break;
+
+            case 3:
+                if (choice == 1)
+                    displayArray();
+                else
+                    displayList();
+                break;
+
+            default:
+                printf("Invalid operation!\n");
+        }
+    }
+}
