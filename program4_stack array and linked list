@@ -1,0 +1,219 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+// Stack using Array
+int arr[MAX];
+int topArray = -1;
+
+// Stack using Linked List
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *topList = NULL;
+
+// ========== ARRAY STACK ==========
+
+// Push
+void pushArray(int value) {
+    if (topArray == MAX - 1) {
+        printf("Array Stack Overflow!\n");
+        return;
+    }
+
+    arr[++topArray] = value;
+    printf("%d pushed into array stack.\n", value);
+}
+
+// Pop
+void popArray() {
+    if (topArray == -1) {
+        printf("Array Stack Underflow!\n");
+        return;
+    }
+
+    printf("%d popped from array stack.\n",
+           arr[topArray--]);
+}
+
+// Peek
+void peekArray() {
+    if (topArray == -1)
+        printf("Array stack is empty!\n");
+    else
+        printf("Top element = %d\n", arr[topArray]);
+}
+
+// Display
+void displayArray() {
+    int i;
+
+    if (topArray == -1) {
+        printf("Array stack is empty!\n");
+        return;
+    }
+
+    printf("Array Stack (top to bottom): ");
+    for (i = topArray; i >= 0; i--)
+        printf("%d ", arr[i]);
+
+    printf("\n");
+}
+
+// ========== LINKED LIST STACK ==========
+
+// Push
+void pushList(int value) {
+    struct Node *newNode =
+        (struct Node *)malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    newNode->data = value;
+    newNode->next = topList;
+    topList = newNode;
+
+    printf("%d pushed into linked list stack.\n", value);
+}
+
+// Pop
+void popList() {
+    struct Node *temp;
+
+    if (topList == NULL) {
+        printf("Linked List Stack Underflow!\n");
+        return;
+    }
+
+    temp = topList;
+    printf("%d popped from linked list stack.\n",
+           temp->data);
+
+    topList = topList->next;
+    free(temp);
+}
+
+// Peek
+void peekList() {
+    if (topList == NULL)
+        printf("Linked list stack is empty!\n");
+    else
+        printf("Top element = %d\n", topList->data);
+}
+
+// Display
+void displayList() {
+    struct Node *temp = topList;
+
+    if (topList == NULL) {
+        printf("Linked list stack is empty!\n");
+        return;
+    }
+
+    printf("Linked List Stack (top to bottom): ");
+
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    printf("\n");
+}
+
+// Free linked list memory
+void freeList() {
+    struct Node *temp;
+
+    while (topList != NULL) {
+        temp = topList;
+        topList = topList->next;
+        free(temp);
+    }
+}
+
+// ========== MAIN FUNCTION ==========
+
+int main() {
+    int choice, operation, value;
+
+    while (1) {
+        printf("\n===== STACK IMPLEMENTATIONS =====\n");
+        printf("1. Stack using Array\n");
+        printf("2. Stack using Linked List\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1) {
+            freeList();
+            return 1;
+        }
+
+        if (choice == 3) {
+            freeList();
+            printf("Program terminated.\n");
+            return 0;
+        }
+
+        if (choice != 1 && choice != 2) {
+            printf("Invalid choice!\n");
+            continue;
+        }
+
+        printf("\n1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("Enter operation: ");
+
+        if (scanf("%d", &operation) != 1) {
+            freeList();
+            return 1;
+        }
+
+        switch (operation) {
+            case 1:
+                printf("Enter value: ");
+                if (scanf("%d", &value) != 1) {
+                    freeList();
+                    return 1;
+                }
+
+                if (choice == 1)
+                    pushArray(value);
+                else
+                    pushList(value);
+                break;
+
+            case 2:
+                if (choice == 1)
+                    popArray();
+                else
+                    popList();
+                break;
+
+            case 3:
+                if (choice == 1)
+                    peekArray();
+                else
+                    peekList();
+                break;
+
+            case 4:
+                if (choice == 1)
+                    displayArray();
+                else
+                    displayList();
+                break;
+
+            default:
+                printf("Invalid operation!\n");
+        }
+    }
+}
