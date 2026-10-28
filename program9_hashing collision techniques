@@ -1,0 +1,135 @@
+
+#include <stdio.h>
+
+#define SIZE 10
+
+int table[SIZE];
+
+// Initialize hash table
+void initialize() {
+    int i;
+    for (i = 0; i < SIZE; i++)
+        table[i] = -1;
+}
+
+// Display hash table
+void display() {
+    int i;
+
+    printf("\nHash Table:\n");
+    printf("Index\tValue\n");
+
+    for (i = 0; i < SIZE; i++) {
+        if (table[i] == -1)
+            printf("%d\tEMPTY\n", i);
+        else
+            printf("%d\t%d\n", i, table[i]);
+    }
+}
+
+// 1. Linear Probing
+void linearProbing(int key) {
+    int index = key % SIZE;
+    int i;
+
+    for (i = 0; i < SIZE; i++) {
+        int pos = (index + i) % SIZE;
+
+        if (table[pos] == -1) {
+            table[pos] = key;
+            printf("%d inserted at index %d\n", key, pos);
+            return;
+        }
+    }
+
+    printf("Hash table is full! Cannot insert %d\n", key);
+}
+
+// 2. Quadratic Probing
+void quadraticProbing(int key) {
+    int index = key % SIZE;
+    int i;
+
+    for (i = 0; i < SIZE; i++) {
+        int pos = (index + i * i) % SIZE;
+
+        if (table[pos] == -1) {
+            table[pos] = key;
+            printf("%d inserted at index %d\n", key, pos);
+            return;
+        }
+    }
+
+    printf("No empty position found for %d\n", key);
+}
+
+// 3. Double Hashing
+void doubleHashing(int key) {
+    int index = key % SIZE;
+    int step = 7 - (key % 7);
+    int i;
+
+    for (i = 0; i < SIZE; i++) {
+        int pos = (index + i * step) % SIZE;
+
+        if (table[pos] == -1) {
+            table[pos] = key;
+            printf("%d inserted at index %d\n", key, pos);
+            return;
+        }
+    }
+
+    printf("No empty position found for %d\n", key);
+}
+
+int main() {
+    int choice, key;
+
+    initialize();
+
+    while (1) {
+        printf("\n--- HASHING TECHNIQUES ---\n");
+        printf("1. Linear Probing\n");
+        printf("2. Quadratic Probing\n");
+        printf("3. Double Hashing\n");
+        printf("4. Display Hash Table\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+
+        if (scanf("%d", &choice) != 1)
+            return 1;
+
+        switch (choice) {
+            case 1:
+                printf("Enter key: ");
+                if (scanf("%d", &key) != 1)
+                    return 1;
+                linearProbing(key);
+                break;
+
+            case 2:
+                printf("Enter key: ");
+                if (scanf("%d", &key) != 1)
+                    return 1;
+                quadraticProbing(key);
+                break;
+
+            case 3:
+                printf("Enter key: ");
+                if (scanf("%d", &key) != 1)
+                    return 1;
+                doubleHashing(key);
+                break;
+
+            case 4:
+                display();
+                break;
+
+            case 5:
+                return 0;
+
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+}
